@@ -1,0 +1,27 @@
+name: Rouge compatibility
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '27 5 * * 1'
+permissions:
+  contents: read
+jobs:
+  latest-rouge:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+      - run: bundle update rouge
+      - run: bundle exec ruby script/compatibility --write
+      - run: bundle exec rake test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rouge-compatibility
+          path: |
+            lib/antares/compatibility.rb
+            docs/compatibility.md

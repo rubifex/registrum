@@ -1,0 +1,47 @@
+module Antares
+  VERSION: String
+  COMPATIBILITY_VERSION: String
+  COMPATIBILITY: Hash[String, :incremental | :window]
+  COMPATIBILITY_DETAILS: Hash[String, Hash[Symbol, untyped]]
+
+  class Error < StandardError
+  end
+  class UnsupportedLexerError < Error
+  end
+  class ResourceLimitError < Error
+  end
+
+  type strategy = :auto | :incremental | :window | :full
+  type token = [Class, String]
+  type row = Array[token]
+
+  def self.compatible?: (untyped lexer) -> (:incremental | :window)
+
+  class LexerStateSnapshot
+    attr_reader fingerprint: String
+    attr_reader bytesize: Integer
+    def initialize: (untyped lexer, ?max_bytes: Integer) -> void
+    def restore: () -> untyped
+    def self.copy: (untyped value, ?Hash[Integer, untyped] memo) -> untyped
+    def self.fingerprint: (untyped value) -> String
+  end
+
+  class Highlighter
+    attr_reader strategy: strategy
+    attr_reader requested_strategy: strategy
+    attr_reader frontier: Integer
+    attr_reader last_scanned_lines: Integer
+    attr_reader fallback_reason: String?
+    attr_reader checkpoints: Hash[Integer, LexerStateSnapshot]
+
+    def initialize: (lexer: untyped, lines: ^(Integer) -> String, line_count: ^() -> Integer,
+      ?strategy: strategy, ?checkpoint_interval: Integer, ?window_context: Integer,
+      ?max_bytes: Integer, ?max_lines: Integer, ?max_line_bytes: Integer,
+      ?max_checkpoint_bytes: Integer, ?max_seconds: Numeric) -> void
+    def tokens_for: (Integer index) -> row
+    def tokens_in: (Range[Integer] range) -> Array[row]
+    def edit: (from_line: Integer, removed: Integer, inserted: Integer) -> self
+    def advance: (until_line: Integer, ?from_line: Integer?) -> self
+    def checkpoint_bytes: () -> Integer
+  end
+end
