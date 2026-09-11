@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Antares adds edit-aware, incremental syntax highlighting to Rouge.">
+    <meta name="theme-color" content="#090d12">
+    <title>Antares — Incremental syntax highlighting for Rouge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./site.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="border-b border-white/10">
+      <nav class="shell flex min-h-20 items-center justify-between gap-6" aria-label="Primary navigation">
+        <a class="flex items-center gap-3 font-semibold text-white focus-ring" href="./" aria-label="Antares home">
+          <span class="brand-mark" aria-hidden="true">✦</span>
+          <span>Antares</span>
+        </a>
+        <div class="flex items-center gap-5 text-sm text-slate-300 sm:gap-8">
+          <a class="nav-link hidden focus-ring sm:inline" href="#how-it-works">How it works</a>
+          <a class="nav-link hidden focus-ring sm:inline" href="#install">Install</a>
+          <a class="nav-link focus-ring" href="https://github.com/noxdea/antares">GitHub</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="shell grid gap-14 py-20 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:gap-20 lg:py-28">
+        <div>
+          <p class="mb-7 font-mono text-sm text-cyan-400 tabular-nums">Ruby 3.1+ · Rouge 5</p>
+          <h1 class="max-w-3xl text-balance text-5xl font-semibold leading-[0.98] text-white sm:text-6xl lg:text-7xl">
+            Highlight the edit. Keep the rest.
+          </h1>
+          <p class="mt-8 max-w-xl text-pretty text-lg leading-8 text-slate-300">
+            Antares gives Rouge line-oriented, edit-aware syntax highlighting. Restore measured lexer state, scan until output converges, and reuse the untouched suffix.
+          </p>
+          <div class="mt-10 flex flex-wrap gap-3">
+            <a class="button-primary focus-ring" href="https://rubygems.org/gems/antares">Install the gem</a>
+            <a class="button-secondary focus-ring" href="https://github.com/noxdea/antares#quick-start">Read the API</a>
+          </div>
+        </div>
+
+        <figure class="code-window" aria-labelledby="code-caption">
+          <figcaption id="code-caption" class="flex items-center justify-between border-b border-white/10 px-5 py-4 text-sm text-slate-400">
+            <span>One-line edit</span>
+            <span class="font-mono text-xs tabular-nums">frontier: 132</span>
+          </figcaption>
+          <div class="grid grid-cols-[auto_1fr] overflow-x-auto py-5 font-mono text-sm leading-7 sm:text-base">
+            <div class="select-none border-r border-white/10 px-4 text-right text-slate-600" aria-hidden="true">127<br>128<br>129<br>130<br>131</div>
+            <pre class="min-w-max px-5 text-slate-300"><code><span class="text-slate-500"># checkpoint restored at line 64</span>
+<span class="code-added">+ status = <span class="text-sky-300">:ready</span></span>
+highlighter.edit(
+  from_line: <span class="text-amber-300">128</span>, removed: <span class="text-amber-300">1</span>, inserted: <span class="text-amber-300">1</span>
+)
+<span class="text-slate-500"># state converged — cached suffix reused</span></code></pre>
+          </div>
+          <div class="border-t border-white/10 px-5 py-5">
+            <div class="checkpoint-line" aria-hidden="true">
+              <span class="checkpoint checkpoint-start"></span>
+              <span class="checkpoint checkpoint-edit"></span>
+              <span class="checkpoint checkpoint-end"></span>
+            </div>
+            <div class="mt-3 grid grid-cols-3 font-mono text-xs text-slate-500 tabular-nums">
+              <span>checkpoint 64</span>
+              <span class="text-center text-cyan-400">edit 128</span>
+              <span class="text-right">converged 131</span>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="border-y border-white/10 bg-slate-950/40" aria-label="Compatibility measurements">
+        <dl class="shell grid grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
+          <div class="metric"><dt>Lexers measured</dt><dd>234</dd></div>
+          <div class="metric"><dt>Incremental</dt><dd>110</dd></div>
+          <div class="metric"><dt>Bounded window</dt><dd>124</dd></div>
+          <div class="metric"><dt>Runtime dependency</dt><dd>1</dd></div>
+        </dl>
+      </section>
+
+      <section id="how-it-works" class="shell py-20 lg:py-28">
+        <div class="grid gap-12 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
+          <div>
+            <h2 class="text-balance text-3xl font-semibold text-white sm:text-4xl">Work follows the edit</h2>
+            <p class="mt-5 max-w-md text-pretty leading-7 text-slate-400">
+              Each request does only the lexical work needed to prove the current lines are correct.
+            </p>
+          </div>
+          <ol class="process border-t border-white/10">
+            <li><span>1</span><strong>Restore</strong><p>Resume from the nearest reusable lexer-state checkpoint.</p></li>
+            <li><span>2</span><strong>Scan</strong><p>Tokenize forward from the changed line under explicit limits.</p></li>
+            <li><span>3</span><strong>Converge</strong><p>Stop when lexer state and tokens match the cached document.</p></li>
+            <li><span>4</span><strong>Reuse</strong><p>Keep the proven, untouched suffix instead of highlighting it again.</p></li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="install" class="border-t border-white/10">
+        <div class="shell grid gap-12 py-20 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20 lg:py-28">
+          <div>
+            <h2 class="text-balance text-3xl font-semibold text-white sm:text-4xl">Add it to your editor</h2>
+            <p class="mt-5 max-w-md text-pretty leading-7 text-slate-400">
+              Keep document storage and colors in your application. Antares returns frozen Rouge token rows.
+            </p>
+            <a class="mt-7 inline-block text-sm font-medium text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 focus-ring" href="https://github.com/noxdea/antares/blob/main/README.md">Full documentation</a>
+          </div>
+          <div class="space-y-4">
+            <div class="code-block">
+              <span class="code-label">Gemfile</span>
+              <pre><code>gem <span class="text-sky-300">"antares"</span></code></pre>
+            </div>
+            <div class="code-block">
+              <span class="code-label">Ruby</span>
+              <pre><code>highlighter = Antares::Highlighter.new(
+  lexer: Rouge::Lexers::Python.new,
+  lines: -&gt;(index) { lines[index] },
+  line_count: -&gt; { lines.length }
+)
+
+highlighter.tokens_in(<span class="text-amber-300">0</span>..<span class="text-amber-300">20</span>)</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-white/10">
+      <div class="shell flex flex-col gap-4 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-pretty">Incremental syntax highlighting for Rouge.</p>
+        <p class="font-mono tabular-nums">Antares v0.1.0 · MIT</p>
+      </div>
+    </footer>
+  </body>
+</html>
