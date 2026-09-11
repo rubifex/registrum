@@ -5,7 +5,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/noxdea/antares/actions/workflows/main.yml"><img src="https://github.com/noxdea/antares/actions/workflows/main.yml/badge.svg" alt="CI"></a>
+  <a href="https://rubygems.org/gems/antares"><img src="https://img.shields.io/gem/v/antares.svg?colorB=319e8c" alt="Gem Version"></a>
+  <a href="https://rubygems.org/gems/antares"><img src="https://img.shields.io/gem/dt/antares.svg" alt="Downloads"></a>
   <img src="https://img.shields.io/badge/ruby-%3E%3D%203.1-ruby.svg" alt="Ruby Version">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
 </p>
@@ -39,14 +40,17 @@ Antares adds edit-aware, line-oriented syntax highlighting to [Rouge](https://gi
 
 <a name="installation"></a>
 
-Build and install the gem from a local checkout:
+Add to your Gemfile:
 
-```bash
-gem build antares.gemspec
-gem install ./antares-0.1.0.gem
+```ruby
+gem "antares"
 ```
 
-Building does not publish the gem. Tests and CI do not publish it either.
+Then install:
+
+```bash
+bundle install
+```
 
 ### Requirements
 
